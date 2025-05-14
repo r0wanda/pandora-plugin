@@ -2,3 +2,4 @@ node_modules/
 dist/
 cert.pem
 key.pem
+.env

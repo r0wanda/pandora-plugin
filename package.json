@@ -5,7 +5,8 @@
 	"scripts": {
 		"watch": "concurrently nodemon npm:serve",
 		"build": "tsx build.ts",
-		"serve": "serve -L -C ./dist"
+		"serve": "serve -L -C ./dist",
+		"test": "tsx test.ts"
 	},
 	"devDependencies": {
 		"@types/clean-css": "^4.2.11",
@@ -27,5 +28,8 @@
 		"ignore": "**/dist/**",
 		"ext": "*",
 		"exec": "npm run build"
+	},
+	"dependencies": {
+		"dotenv": "^16.5.0"
 	}
 }

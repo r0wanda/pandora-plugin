@@ -64,7 +64,7 @@ const fileUrl: esbuild.Plugin = {
 const neptuneNativeImports: esbuild.Plugin = {
 	name: "neptuneNativeImports",
 	setup(build) {
-		build.onLoad({ filter: /.*[\/\\].+\.native\.[a-z]+/g }, async (args) => {
+		build.onLoad({ filter: /.*[\/\\].+\.native\.[a-z]+/ }, async (args) => {
 			const globalName = "neptuneExports";
 			const result = await esbuild.build({
 				entryPoints: [args.path],
@@ -179,17 +179,17 @@ for (const plugin of plugins) {
 		});
 }
 
-fs.mkdirSync("./dist/themes", { recursive: true });
+/*fs.mkdirSync("./dist/themes", { recursive: true });
 const themes = fs.readdirSync("./themes");
 for (const theme of themes) {
 	const file = fs.readFileSync(path.join("./themes", theme), "utf8");
 	const css = new CleanCSS().minify(file).styles;
 
 	// Minify manifest JSON
-	const json = file.slice(file.indexOf("/*") + 2, file.indexOf("*/"));
+	const json = file.slice(file.indexOf("/*") + 2, file.indexOf("* /"));
 	const manifest = JSON.parse(json);
-	const comment = `/*${JSON.stringify(manifest)}*/`;
+	const comment = `/*${JSON.stringify(manifest)}* /`;
 
 	fs.writeFileSync(path.join("./dist/themes", theme), comment + css);
 	console.log("Built " + manifest.name + "!");
-}
+}*/
