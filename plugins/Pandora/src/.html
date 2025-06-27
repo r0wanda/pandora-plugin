@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <style>
+            @keyframes pandClose {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                    display: none;
+                }
+            }
+            .pand.scrCont {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                margin: 0px;
+                top: 0px;
+                left: 0px;
+                z-index: 99;
+                background-color: rgba(0, 0, 0, 0.7);
+                width: 100vw;
+                height: 100vh;
+            }
+            .pand.smCont {
+                display: block;
+                width: 30%;
+                height: 40%;
+                border-radius: 30px;
+                background-color: black;
+                text-align: center;
+            }
+            .pand.email, .pand.pass, .pand.submit {
+                display: block;
+                position: relative;
+                width: 70%;
+                height: 15%;
+                border-radius: 20px;
+                border: 2px solid transparent;
+                background-color: rgba(255, 255, 255, 0.2);
+                font-size: 1.1em;
+                text-indent: 0.5em;
+                color: white;
+                outline: none;
+                transition-duration: 0.5s;
+            }
+            .pand.email:focus, .pand.pass:focus {
+                border: 2px solid white;
+            }
+            .pand.email:invalid:not(:focus):not(:placeholder-shown), .pand.pass:invalid:not(:focus):not(:placeholder-shown) {
+                border: 2px solid red;
+            }
+            .pand.smCont:has(.pand.email:valid):has(.pand.pass:valid) .pand.submit {
+                background-color: rgba(255, 255, 255, 0.8);
+                cursor: pointer;
+            }
+            .pand.email::placeholder, .pand.pass::placeholder {
+                color: gray;
+            }
+            .pand.email {
+                margin: 5% auto 5% auto;
+            }
+            .pand.pass {
+                margin: 0% auto 5% auto;
+            }
+            .pand.submit {
+                margin: auto;
+                color: black;
+                background-color: rgba(255, 255, 255, 0.4);
+                cursor: not-allowed;
+            }
+            .pand.pHeader {
+                color:white;
+                margin-bottom: 0px;
+            }
+            .pand.pExit {
+                display: inline-block;
+                position: relative;
+                text-align: left;
+                margin: 2% 0px 0px 2%;
+                width: 100%;
+                height: 1em;
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <h1> hello world </h1>
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.wallpapersafari.com%2F44%2F55%2Fkp50Ri.jpg&f=1&nofb=1&ipt=91bf1258c48e7ffcf5e39687d514af026b844800397a722cb01fb63633a012e3">
+        <div class="pand scrCont">
+            <div class="pand smCont">
+                <h2 class="pand pExit">&#10006;</h2>
+                <h1 class="pand pHeader">Pandora Login</h2>
+                <input type="email" autocomplete="email" class="pand email" placeholder="Enter your Pandora account email" required>
+                <input type="password" class="pand pass" placeholder="Enter your Pandora account password" minlength="6" required>
+                <input type="submit" class="pand submit" value="Log In" onclick="this.parentNode.parentNode.style.animation = 'pandClose 0.5s linear forwards';">
+            </div>
+        </div>
+    </body>
+</html>

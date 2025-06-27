@@ -1,7 +1,5 @@
-// @ts-ignore
-import got from 'got';
-import { Blowfish } from 'egoroof-blowfish';
 import Partners from './Partners';
+import { got, Blowfish } from './PandoraModules.native';
 
 export namespace Pj {
     export interface Licensing {
@@ -76,11 +74,11 @@ export interface SearchOpts {
     includeGenreStations: boolean;
 }
 
-export default class Api {
+export class Api {
     #user: string;
     #pass: string;
-    #enc?: Blowfish;
-    #dec?: Blowfish;
+    #enc?: InstanceType<typeof Blowfish>;
+    #dec?: InstanceType<typeof Blowfish>;
     #partner?: Pj.Partner;
     #syncTime?: number;
     auth?: Pj.User;

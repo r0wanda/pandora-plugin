@@ -1,11 +1,14 @@
 {
-	"displayName": "RealMAX",
-	"description": "Always ensure that the highest quality available of a track is played",
-	"author": "Inrixia",
+	"displayName": "Pandora",
+	"description": "Use the Pandora station algorithm on Tidal",
+	"author": "r0wanda",
 	"main": "./src/index.js",
 	"dependencies": {
 		"@inrixia/lib": "workspace:*",
 		"@inrixia/helpers": "^2.0.11",
-		"egoroof-blowfish": "^4.0.1"
+		"egoroof-blowfish": "^4.0.1",
+		"got": "^14.4.7",
+		"validator": "^13.15.0",
+		"keytar": "^7.9.0"
 	}
 }

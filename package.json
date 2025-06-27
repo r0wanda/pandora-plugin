@@ -30,6 +30,7 @@
 		"exec": "npm run build"
 	},
 	"dependencies": {
+		"@types/validator": "^13.15.0",
 		"dotenv": "^16.5.0"
 	}
 }

@@ -3,7 +3,7 @@ import { actions, intercept, store } from "@neptune";
 import { debounce } from "@inrixia/lib/debounce";
 
 import { Tracer } from "@inrixia/lib/trace";
-const trace = Tracer("[RealMAX]");
+const trace = Tracer("[Pandora]");
 
 // @ts-ignore
 import { chunkArray } from "@inrixia/helpers/object";
@@ -15,84 +15,20 @@ import { ContextMenu } from "@inrixia/lib/ContextMenu";
 import { AlbumCache } from "@inrixia/lib/Caches/AlbumCache";
 import { settings } from "./Settings";
 import type { PlayQueueItem } from "neptune-types/tidal";
+import Tidal from "./Tidal";
+import { log, warn, error } from './Logger';
 
 export { Settings } from "./Settings.js";
 
-const maxQueueItem = async (elements: readonly PlayQueueItem[], currentIndex: number, jumpTo?: number) => {
-	jumpTo ??= currentIndex;
-	const newElements = [...elements];
-	const currentId = newElements[currentIndex].mediaItemId;
-	const maxItem = await MaxTrack.getMaxTrack(currentId);
-	MaxTrack.getMaxTrack(newElements[currentIndex + 1].mediaItemId);
-	if (maxItem !== false && maxItem.id !== undefined) {
-		newElements[currentIndex].mediaItemId = maxItem.id;
-		actions.playQueue.reset({
-			elements: newElements,
-			currentIndex: jumpTo,
-		});
-		return true;
-	}
-	return false;
-};
-
-const unloadTransition = intercept("playbackControls/MEDIA_PRODUCT_TRANSITION", ([{ mediaProduct }]) => {
-	actions.playbackControls.pause();
-	(async () => {
-		const productId: string = (<any>mediaProduct).productId;
-		const maxItem = await MaxTrack.getMaxTrack(productId);
-		if (maxItem !== false && maxItem.id !== undefined) {
-			actions.playQueue.addNext({ mediaItemIds: [maxItem.id], context: { type: "UNKNOWN" } });
-			actions.playQueue.moveNext();
-		}
-		actions.playbackControls.play();
-	})();
-});
-
-const unloadAddNow = intercept("playQueue/ADD_NOW", ([payload]) => {
-	(async () => {
-		const mediaItemIds = [...payload.mediaItemIds];
-		const currentIndex = payload.fromIndex ?? 0;
-		const maxItem = await MaxTrack.getMaxTrack(mediaItemIds[currentIndex]);
-		if (maxItem !== false && maxItem.id !== undefined) mediaItemIds[currentIndex] = maxItem.id;
-		actions.playQueue.addNow({ ...payload, mediaItemIds });
-	})();
-	return true;
-});
-
-const unloadSkip = intercept(["playQueue/MOVE_TO", "playQueue/MOVE_NEXT", "playQueue/MOVE_PREVIOUS"], ([payload, action]) => {
-	(async () => {
-		const { elements, currentIndex } = store.getState().playQueue;
-		switch (action) {
-			case "playQueue/MOVE_NEXT":
-				if (await maxQueueItem(elements, currentIndex + 1)) return false;
-				actions.playQueue.moveNext();
-				break;
-			case "playQueue/MOVE_PREVIOUS":
-				if (await maxQueueItem(elements, currentIndex - 1)) return false;
-				actions.playQueue.movePrevious();
-				break;
-			case "playQueue/MOVE_TO":
-				if (await maxQueueItem(elements, payload ?? currentIndex)) return false;
-				actions.playQueue.moveTo(payload ?? currentIndex);
-				break;
-		}
-		actions.playbackControls.play();
-		return true;
-	})();
-});
-
-const unloadIntercept = () => {
-	unloadTransition();
-	unloadAddNow();
-	unloadSkip();
-};
-
 ContextMenu.onOpen(async (contextSource, contextMenu, trackItems) => {
+	/*actions.message.messageInfo({
+		message: 'open'
+	});*/
 	document.getElementById("realMax-button")?.remove();
 	if (trackItems.length === 0 || !settings.displayMaxContextButton) return;
 
 	let sourceName = trackItems[0].title;
-	// ts-expect-error Playlist access has changed
+	// @ts-expect-error Playlist access has changed
 	if (contextSource.type === "PLAYLIST") sourceName = store.getState().content.playlists[contextSource.playlistId]?.title ?? sourceName;
 	else if (contextSource.type === "ALBUM") sourceName = (await AlbumCache.get(+contextSource.albumId))?.title ?? sourceName;
 	sourceName = `${sourceName} - RealMAX`;
@@ -166,7 +102,9 @@ ContextMenu.onOpen(async (contextSource, contextMenu, trackItems) => {
 	});
 });
 
+
+const tidal = new Tidal();
+
 export const onUnload = () => {
-	unloadIntercept();
-	safeUnload();
+	tidal.unload();
 };
